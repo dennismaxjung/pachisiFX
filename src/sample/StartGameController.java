@@ -20,12 +20,11 @@ import java.util.ResourceBundle;
 
 /**
  * Created by Dennis on 16.07.2017.
+ * pachisiFX
  */
 public class StartGameController implements Initializable {
     @FXML
     public Button start;
-
-
 
     @FXML
     public void loadGame(ActionEvent actionEvent) {
@@ -34,7 +33,7 @@ public class StartGameController implements Initializable {
 
         FileChooser fileChooser = new FileChooser();
         File tmp = fileChooser.showOpenDialog(theStage);
-        Main.board = SerializeHelper.<Board>readBinary(tmp);
+        Main.board = SerializeHelper.readBinary(tmp);
         playerCount.setValue(Main.board.getPlayerCount());
         Main.gameLoaded = true;
         playerCount.setDisable(true);

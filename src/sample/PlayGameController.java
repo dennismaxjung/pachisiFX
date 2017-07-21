@@ -45,23 +45,15 @@ public class PlayGameController implements Initializable {
         for (int i = 0; i < Main.playerCount; i++)
         {
             List<Label> newPlayerStones = new ArrayList<>();
-            int k = 0;
+            int k;
             for (k = 1; k < 5; k++) {
                 newPlayerStones.add(StaticHelpers.generateNewPlayerStone(PlayerColor.values()[i], k));
             }
             playerStones.add(newPlayerStones);
         }
-
-        //Figure tmp = Main.board.getPlayer(PlayerColor.Blue).takeFigureFromStart();
-        //Main.board.fields[10] = tmp;
         reloadBoard();
         NewTurn(PlayerColor.Blue);
-        //showDice.setOnMouseClicked(event -> Main.board = SerializeHelper.<Board>readBinary("D:\\board.ser"));
-        //SerializeHelper.test(Main.board);
-        //SerializeHelper.read();
-        //showDice.setOnMouseClicked(event ->  NewTurn(PlayerColor.values()[(int)(player%Main.playerCount)]));
-        //showDice.setOnMouseClicked(event -> dice.StartDiceing((int) (6.0 * Math.random()) + 1, StaticHelpers.getColor(PlayerColor.values()[test++ % Main.board.getPlayerCount()])));
-    }
+        }
 
         private void moveFigure(Label figure,int field)
         {
@@ -95,19 +87,10 @@ public class PlayGameController implements Initializable {
             // HOMES
             for (int i = 0; i < Main.playerCount; i++)
             {
-                for (Figure fig:Main.board.getPlayer(PlayerColor.values()[i]).start)
-                {
-                    board.add(playerStones.get(StaticHelpers.getIdOfPlayerColor(PlayerColor.values()[i])).get(fig.getId()-1),StaticHelpers.getStart(fig.getId()-1,PlayerColor.values()[i]).x,StaticHelpers.getStart(fig.getId()-1,PlayerColor.values()[i]).y);
+                for (Figure fig:Main.board.getPlayer(PlayerColor.values()[i]).start) {
+                    board.add(playerStones.get(StaticHelpers.getIdOfPlayerColor(PlayerColor.values()[i])).get(fig.getId() - 1), StaticHelpers.getStart(fig.getId() - 1, PlayerColor.values()[i]).x, StaticHelpers.getStart(fig.getId() - 1, PlayerColor.values()[i]).y);
 
                 }
-                /*for(int ta = 0; ta < 4; ta++) {
-
-                    if (Main.board.getPlayer(PlayerColor.values()[i]) != null && Main.board.getPlayer(PlayerColor.values()[i]).start.size() > ta) {
-
-                        board.add(playerStones.get(StaticHelpers.getIdOfPlayerColor(PlayerColor.values()[i])).get(Main.board.getPlayer(PlayerColor.values()[i]).start.get(ta).getId()-1),StaticHelpers.getStart(ta,PlayerColor.values()[i]).x,StaticHelpers.getStart(ta,PlayerColor.values()[i]).y);
-
-                    }
-                }*/
             }
 
 
@@ -162,20 +145,16 @@ public class PlayGameController implements Initializable {
             }
 
 
-            //Main.playerInterfac.turnOfPlayer(currentPlayer);
+
 
             if(countDice <= 3 && throwDiceAgain)
             {
                 throwDiceAgain = false;
                 System.out.println("Player: "+ currentPlayerColor.toString()+" - Versuch: " + countDice + " - Again: " + throwDiceAgain);
-                //Main.playerInterfac.printBoard(board);
                 int diced = currentPlayer.roleTheDice();
                 dice.StartDiceing(diced,StaticHelpers.getColor(currentPlayerColor));
                 dice.addMyEventListener(null);
-                dice.addMyEventListener(e -> {
-                    checkMoves(diced);
-                    //dice.addMyEventListener(null);
-                });
+                dice.addMyEventListener(e -> checkMoves(diced));
             }
             else{
                 player++;
@@ -188,9 +167,6 @@ public class PlayGameController implements Initializable {
                 throwDiceAgain = true;
                 NewTurn(PlayerColor.values()[(int)(player%Main.playerCount)]);
             }
-
-
-
         }
 
 
@@ -217,12 +193,8 @@ public class PlayGameController implements Initializable {
             else {
                 Label figLabel = playerStones.get(StaticHelpers.getIdOfPlayerColor(tmpFig.getColor())).get(tmpFig.getId() - 1);
                 Timeline flasher = new Timeline(
-                        new KeyFrame(javafx.util.Duration.seconds(0.5), e -> {
-                            StaticHelpers.markStoneAsActive(figLabel);
-                        }),
-                        new KeyFrame(javafx.util.Duration.seconds(1.0), e -> {
-                            StaticHelpers.markStoneAsInActive(figLabel);
-                        })
+                        new KeyFrame(javafx.util.Duration.seconds(0.5), e -> StaticHelpers.markStoneAsActive(figLabel)),
+                        new KeyFrame(javafx.util.Duration.seconds(1.0), e -> StaticHelpers.markStoneAsInActive(figLabel))
                 );
 
                 flasher.setCycleCount(Animation.INDEFINITE);
@@ -254,12 +226,8 @@ public class PlayGameController implements Initializable {
                 else {
                     Label figLabel = playerStones.get(StaticHelpers.getIdOfPlayerColor(tmpFig.getColor())).get(tmpFig.getId() - 1);
                     Timeline flasher = new Timeline(
-                            new KeyFrame(javafx.util.Duration.seconds(0.5), e -> {
-                                StaticHelpers.markStoneAsActive(figLabel);
-                            }),
-                            new KeyFrame(javafx.util.Duration.seconds(1.0), e -> {
-                                StaticHelpers.markStoneAsInActive(figLabel);
-                            })
+                            new KeyFrame(javafx.util.Duration.seconds(0.5), e -> StaticHelpers.markStoneAsActive(figLabel)),
+                            new KeyFrame(javafx.util.Duration.seconds(1.0), e -> StaticHelpers.markStoneAsInActive(figLabel))
                     );
 
                     flasher.setCycleCount(Animation.INDEFINITE);
@@ -287,7 +255,7 @@ public class PlayGameController implements Initializable {
 
         }
         // Wenn keine spieler auf dem feld ist und nicht sowieso schon nochmal würfeln darf, darf er nochmal würfeln
-        else if(Main.board.playerHasNoFiguresOnFields(currentPlayer.getColor()) && throwDiceAgain == false)
+        else if(Main.board.playerHasNoFiguresOnFields(currentPlayer.getColor()) && !throwDiceAgain)
         {
             throwDiceAgain = true;
             countDice ++;
@@ -307,12 +275,8 @@ public class PlayGameController implements Initializable {
                 else {
                     Label figLabel = playerStones.get(StaticHelpers.getIdOfPlayerColor(fig.getColor())).get(fig.getId() - 1);
                     Timeline flasher = new Timeline(
-                            new KeyFrame(javafx.util.Duration.seconds(0.5), e -> {
-                                StaticHelpers.markStoneAsActive(figLabel);
-                            }),
-                            new KeyFrame(javafx.util.Duration.seconds(1.0), e -> {
-                                StaticHelpers.markStoneAsInActive(figLabel);
-                            })
+                            new KeyFrame(javafx.util.Duration.seconds(0.5), e -> StaticHelpers.markStoneAsActive(figLabel)),
+                            new KeyFrame(javafx.util.Duration.seconds(1.0), e -> StaticHelpers.markStoneAsInActive(figLabel))
                     );
 
                     flasher.setCycleCount(Animation.INDEFINITE);
@@ -353,18 +317,13 @@ public class PlayGameController implements Initializable {
             {
                 Label figLabel = playerStones.get(StaticHelpers.getIdOfPlayerColor(fig.getColor())).get(fig.getId()-1);
                 Timeline flasher = new Timeline(
-                        new KeyFrame(javafx.util.Duration.seconds(0.5), e -> {
-                            StaticHelpers.markStoneAsActive(figLabel);
-                        }),
-                        new KeyFrame(javafx.util.Duration.seconds(1.0), e -> {
-                            StaticHelpers.markStoneAsInActive(figLabel);
-                        })
+                        new KeyFrame(javafx.util.Duration.seconds(0.5), e -> StaticHelpers.markStoneAsActive(figLabel)),
+                        new KeyFrame(javafx.util.Duration.seconds(1.0), e -> StaticHelpers.markStoneAsInActive(figLabel))
                 );
 
                 flasher.setCycleCount(Animation.INDEFINITE);
                 flasher.play();
                 tmpAnimation.add(flasher);
-                //StaticHelpers.blink(figLabel);
 
                 figLabel.setOnMouseClicked(event -> {
                     Main.board.setFigureToField(Main.board.getFieldOfFigure(fig)+dice,fig);

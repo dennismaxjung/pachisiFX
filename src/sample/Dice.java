@@ -39,8 +39,8 @@ public class Dice {
     }
     void fireMyEvent(java.awt.event.ActionEvent evt) {
         List<EventListener> listeners = listenerList;
-        for (int i = 0; i < listeners.size(); i++) {
-            ((ActionListener) listeners.get(i)).actionPerformed(evt);
+        for (EventListener listener : listeners) {
+            ((ActionListener) listener).actionPerformed(evt);
 
         }
     }
@@ -95,6 +95,9 @@ public class Dice {
 
     }
 
+    /**
+     *  Animation for make the dice big
+     */
     private void setResizeBig()
     {
             resizeBig = new Timeline(
@@ -116,6 +119,9 @@ public class Dice {
 
     }
 
+    /**
+     *  Animation for make the dice small
+     */
     private void setResizeSmall()
     {
         resizeSmall = new Timeline(
@@ -137,6 +143,11 @@ public class Dice {
 
     }
 
+
+    /**
+     * Generates new circle with radius 13 and black filled
+     * @return a new Circle
+     */
     private Circle getDiceEye()
     {
         return new Circle(13, Paint.valueOf("BLACK"));
