@@ -50,8 +50,6 @@ public class StartGameController implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        //start.setDisable(true);
-
     }
 
 
