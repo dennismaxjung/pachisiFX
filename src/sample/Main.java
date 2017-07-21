@@ -38,7 +38,7 @@ public class Main extends Application {
         FXMLLoader loaderGui = new FXMLLoader(getClass().getResource("startGame.fxml"));
         Parent parentroot = loaderGui.load();
 
-        StartGameController startGameController = (StartGameController) loaderGui.getController();
+        StartGameController startGameController = loaderGui.getController();
         startGameController.start.setOnAction(event -> {
             if(!startGameController.playerCount.getSelectionModel().isEmpty()){
                 autoForced = startGameController.autoForced.isSelected();
@@ -68,16 +68,18 @@ public class Main extends Application {
 
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("YYYY-MM-dd_hh-mm-ss");
        primaryStage.setOnCloseRequest(event -> {
-            Stage stage = (Stage) event.getSource();
-            javafx.stage.Window theStage = stage.getScene().getWindow();
+           if(board != null) {
+               Stage stage = (Stage) event.getSource();
+               javafx.stage.Window theStage = stage.getScene().getWindow();
 
-            FileChooser fileChooser = new FileChooser();
-            fileChooser.setInitialFileName("pachisi_"+ LocalDateTime.now().format(formatter)+".save");
+               FileChooser fileChooser = new FileChooser();
+               fileChooser.setInitialFileName("pachisi_" + LocalDateTime.now().format(formatter) + ".save");
 
-            File tmp = fileChooser.showSaveDialog(theStage);
-            if(tmp != null) {
-                SerializeHelper.saveBinary(board, tmp);
-            }
+               File tmp = fileChooser.showSaveDialog(theStage);
+               if (tmp != null) {
+                   SerializeHelper.saveBinary(board, tmp);
+               }
+           }
         });
         primaryStage.show();
 
@@ -92,7 +94,7 @@ public class Main extends Application {
     private static List<Player> generatePlayers(int count)
     {
         List<Player> tmp = new ArrayList<>();
-        int i = 0;
+        int i;
         for(i = 0; i < count ; i++)
         {
             tmp.add(PlayerHelper.createPlayer("Player", PlayerColor.values()[i]));
